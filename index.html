@@ -3,74 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layanan Bantuan Public</title>
+    <title>Public & Admin Panel</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f0f2f5;
+            color: #333;
         }
+
         .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        h1 {
-            color: #2c3e50;
+
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #003366 100%);
+            color: white;
+            padding: 1rem;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        button {
-            background-color: #3498db;
+
+        .header h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            background-color: #004080;
+            padding: 0.5rem;
+        }
+
+        .tab {
+            background-color: #0059b3;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 0.8rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
-            display: block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background-color: #0073e6;
+            box-shadow: 0 0 10px rgba(0, 132, 255, 0.5);
+        }
+
+        .tab:hover {
+            background-color: #0073e6;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
         }
-        button:hover {
-            background-color: #2980b9;
+
+        .panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
         }
-        button:disabled {
-            background-color: #95a5a6;
+
+        .panel h2 {
+            color: #004080;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 2px solid #e6f0fa;
+            padding-bottom: 0.5rem;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #0066cc, #004d99);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #004d99, #003366);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-stop {
+            background: linear-gradient(to right, #cc0000, #990000);
+        }
+
+        .btn-stop:hover {
+            background: linear-gradient(to right, #990000, #660000);
+        }
+
+        .btn:disabled {
+            background: #cccccc;
             cursor: not-allowed;
         }
-        #status {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
+
+        .status {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-weight: 600;
         }
-        .connected {
+
+        .status-connected {
             background-color: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
-        .disconnected {
+
+        .status-disconnected {
             background-color: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-waiting {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .video-wrapper {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-title {
+            background-color: #004080;
+            color: white;
+            padding: 0.8rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        video {
+            width: 100%;
+            height: 300px;
+            background-color: #000;
+            display: block;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .connection-info {
+            background-color: #e6f0fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Layanan Bantuan Public</h1>
-        <p>Klik tombol di bawah untuk berbagi layar Anda dengan admin.</p>
+        <div class="header">
+            <h1>Layanan Bantuan Real-time</h1>
+        </div>
         
-        <button id="shareScreen">Bagikan Layar Saya</button>
-        <button id="stopSharing" disabled>Hentikan Berbagi</button>
+        <div class="tab-container">
+            <button class="tab active" onclick="showPanel('public-panel')">Panel Public</button>
+            <button class="tab" onclick="showPanel('admin-panel')">Panel Admin</button>
+        </div>
         
-        <div id="status" class="disconnected">Tidak terhubung</div>
+        <div class="content">
+            <!-- Public Panel -->
+            <div id="public-panel" class="panel">
+                <h2>Panel Public - Bagikan Layar Anda</h2>
+                <p>Gunakan panel ini untuk berbagi layar Anda dengan admin. Klik tombol "Mulai Berbagi Layar" untuk memulai.</p>
+                
+                <button id="shareScreenBtn" class="btn">Mulai Berbagi Layar</button>
+                <button id="stopShareBtn" class="btn btn-stop" disabled>Hentikan Berbagi</button>
+                
+                <div id="publicStatus" class="status status-disconnected">
+                    Status: Tidak terhubung
+                </div>
+                
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <div class="video-title">Layar Anda</div>
+                        <video id="localVideo" autoplay muted playsinline></video>
+                    </div>
+                </div>
+                
+                <div class="connection-info">
+                    <p>ID Koneksi: <span id="connectionId">Belum terhubung</span></p>
+                </div>
+            </div>
+            
+            <!-- Admin Panel -->
+            <div id="admin-panel" class="panel admin-panel">
+                <h2>Panel Admin - Pantau Layar Public</h2>
+                <p>Gunakan panel ini untuk memantau layar public yang sedang berbagi. Klik tombol "Mulai Pantau" untuk memulai.</p>
+                
+                <button id="startMonitorBtn" class="btn">Mulai Pantau</button>
+                <button id="stopMonitorBtn" class="btn btn-stop" disabled>Hentikan Pantau</button>
+                
+                <div id="adminStatus" class="status status-disconnected">
+                    Status: Tidak terhubung
+                </div>
+                
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <div class="video-title">Layar Public</div>
+                        <video id="remoteVideo" autoplay playsinline></video>
+                    </div>
+                </div>
+                
+                <div class="connection-info">
+                    <p>Terhubung dengan: <span id="connectedTo">Tidak ada koneksi</span></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Elemen UI
+        const publicPanel = document.getElementById('public-panel');
+        const adminPanel = document.getElementById('admin-panel');
+        const shareScreenBtn = document.getElementById('shareScreenBtn');
+        const stopShareBtn = document.getElementById('stopShareBtn');
+        const startMonitorBtn = document.getElementById('startMonitorBtn');
+        const stopMonitorBtn = document.getElementById('stopMonitorBtn');
+        const publicStatus = document.getElementById('publicStatus');
+        const adminStatus = document.getElementById('adminStatus');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const connectionId = document.getElementById('connectionId');
+        const connectedTo = document.getElementById('connectedTo');
+
+        // Variabel WebRTC
         let localStream = null;
         let peerConnection = null;
+        let isSharing = false;
+        let isMonitoring = false;
+
+        // Konfigurasi STUN server
         const configuration = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -78,56 +290,132 @@
             ]
         };
 
-        // Elemen UI
-        const shareScreenBtn = document.getElementById('shareScreen');
-        const stopSharingBtn = document.getElementById('stopSharing');
-        const statusDiv = document.getElementById('status');
+        // Fungsi untuk menampilkan panel
+        function showPanel(panelId) {
+            // Sembunyikan semua panel
+            publicPanel.style.display = 'none';
+            adminPanel.style.display = 'none';
+            
+            // Hapus kelas active dari semua tab
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Tampilkan panel yang dipilih dan aktifkan tab
+            document.getElementById(panelId).style.display = 'block';
+            event.target.classList.add('active');
+        }
 
-        // Event listener untuk tombol berbagi layar
+        // Event listener untuk tombol public panel
         shareScreenBtn.addEventListener('click', startScreenSharing);
-        stopSharingBtn.addEventListener('click', stopScreenSharing);
+        stopShareBtn.addEventListener('click', stopScreenSharing);
 
+        // Event listener untuk tombol admin panel
+        startMonitorBtn.addEventListener('click', startMonitoring);
+        stopMonitorBtn.addEventListener('click', stopMonitoring);
+
+        // Fungsi untuk mulai berbagi layar
         async function startScreenSharing() {
             try {
                 // Meminta izin untuk berbagi layar
                 localStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
+                    video: {
+                        cursor: "always",
+                        displaySurface: "window"
+                    },
                     audio: true
                 });
                 
-                // Mengubah status UI
-                shareScreenBtn.disabled = true;
-                stopSharingBtn.disabled = false;
-                statusDiv.textContent = "Sedang berbagi layar...";
-                statusDiv.className = "status connected";
+                // Tampilkan stream di elemen video
+                localVideo.srcObject = localStream;
                 
-                // Di aplikasi nyata, di sini akan dibuat koneksi WebRTC ke server
-                console.log("Layar berhasil dibagikan. Stream:", localStream);
+                // Update UI
+                shareScreenBtn.disabled = true;
+                stopShareBtn.disabled = false;
+                publicStatus.textContent = "Status: Sedang berbagi layar";
+                publicStatus.className = "status status-connected";
+                isSharing = true;
+                
+                // Generate random connection ID
+                const randomId = Math.floor(1000 + Math.random() * 9000);
+                connectionId.textContent = `PUB-${randomId}`;
                 
                 // Menangani ketika pengguna menghentikan berbagi dari browser
-                localStream.getVideoTracks()[0].onended = stopScreenSharing;
+                localStream.getVideoTracks()[0].onended = () => {
+                    stopScreenSharing();
+                    alert("Berbagi layar dihentikan oleh browser");
+                };
+                
+                console.log("Layar berhasil dibagikan");
                 
             } catch (error) {
-                console.error("Error accessing screen:", error);
-                alert("Tidak dapat mengakses layar. Pastikan Anda memberikan izin yang diperlukan.");
+                console.error("Error mengakses layar:", error);
+                publicStatus.textContent = "Error: Tidak dapat mengakses layar";
+                publicStatus.className = "status status-disconnected";
             }
         }
 
+        // Fungsi untuk menghentikan berbagi layar
         function stopScreenSharing() {
-            // Menghentikan semua track
+            // Hentikan semua track
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
             }
             
             // Reset UI
             shareScreenBtn.disabled = false;
-            stopSharingBtn.disabled = true;
-            statusDiv.textContent = "Berbagi dihentikan";
-            statusDiv.className = "status disconnected";
+            stopShareBtn.disabled = true;
+            publicStatus.textContent = "Status: Tidak terhubung";
+            publicStatus.className = "status status-disconnected";
+            localVideo.srcObject = null;
+            isSharing = false;
+            connectionId.textContent = "Belum terhubung";
             
-            // Di aplikasi nyata, di sini akan ditutup koneksi WebRTC
-            console.log("Screen sharing stopped");
+            console.log("Berbagi layar dihentikan");
         }
+
+        // Fungsi untuk memulai monitoring (admin)
+        function startMonitoring() {
+            // Update UI
+            startMonitorBtn.disabled = true;
+            stopMonitorBtn.disabled = false;
+            adminStatus.textContent = "Status: Sedang memantau";
+            adminStatus.className = "status status-waiting";
+            isMonitoring = true;
+            
+            // Simulasi koneksi berhasil setelah 2 detik
+            setTimeout(() => {
+                adminStatus.textContent = "Status: Terhubung - Memantau layar public";
+                adminStatus.className = "status status-connected";
+                connectedTo.textContent = connectionId.textContent;
+                
+                // Untuk demo, kita akan menampilkan placeholder
+                // Dalam implementasi nyata, ini akan menjadi stream dari public
+                remoteVideo.srcObject = null;
+                remoteVideo.poster = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23004080'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23fff'%3ELayar Public%3C/text%3E%3Ctext x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18' fill='%23fff'%3ESedang dipantau%3C/text%3E%3C/svg%3E";
+            }, 2000);
+        }
+
+        // Fungsi untuk menghentikan monitoring (admin)
+        function stopMonitoring() {
+            // Update UI
+            startMonitorBtn.disabled = false;
+            stopMonitorBtn.disabled = true;
+            adminStatus.textContent = "Status: Tidak terhubung";
+            adminStatus.className = "status status-disconnected";
+            remoteVideo.srcObject = null;
+            remoteVideo.poster = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23fff'%3EMonitoring Dihentikan%3C/text%3E%3C/svg%3E";
+            isMonitoring = false;
+            connectedTo.textContent = "Tidak ada koneksi";
+            
+            console.log("Monitoring dihentikan");
+        }
+
+        // Inisialisasi halaman
+        window.onload = function() {
+            // Set poster untuk video elements
+            localVideo.poster = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23fff'%3ELayar Anda%3C/text%3E%3C/svg%3E";
+            remoteVideo.poster = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' fill='%23333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23fff'%3ELayar Public%3C/text%3E%3C/svg%3E";
+        };
     </script>
 </body>
 </html>
