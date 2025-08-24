@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layanan Bantuan Public</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Layanan Bantuan Public</h1>
+        <p>Klik tombol di bawah untuk berbagi layar Anda dengan admin.</p>
+        
+        <button id="shareScreen">Bagikan Layar Saya</button>
+        <button id="stopSharing" disabled>Hentikan Berbagi</button>
+        
+        <div id="status" class="disconnected">Tidak terhubung</div>
+    </div>
+
+    <script>
+        let localStream = null;
+        let peerConnection = null;
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+
+        // Elemen UI
+        const shareScreenBtn = document.getElementById('shareScreen');
+        const stopSharingBtn = document.getElementById('stopSharing');
+        const statusDiv = document.getElementById('status');
+
+        // Event listener untuk tombol berbagi layar
+        shareScreenBtn.addEventListener('click', startScreenSharing);
+        stopSharingBtn.addEventListener('click', stopScreenSharing);
+
+        async function startScreenSharing() {
+            try {
+                // Meminta izin untuk berbagi layar
+                localStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true
+                });
+                
+                // Mengubah status UI
+                shareScreenBtn.disabled = true;
+                stopSharingBtn.disabled = false;
+                statusDiv.textContent = "Sedang berbagi layar...";
+                statusDiv.className = "status connected";
+                
+                // Di aplikasi nyata, di sini akan dibuat koneksi WebRTC ke server
+                console.log("Layar berhasil dibagikan. Stream:", localStream);
+                
+                // Menangani ketika pengguna menghentikan berbagi dari browser
+                localStream.getVideoTracks()[0].onended = stopScreenSharing;
+                
+            } catch (error) {
+                console.error("Error accessing screen:", error);
+                alert("Tidak dapat mengakses layar. Pastikan Anda memberikan izin yang diperlukan.");
+            }
+        }
+
+        function stopScreenSharing() {
+            // Menghentikan semua track
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            
+            // Reset UI
+            shareScreenBtn.disabled = false;
+            stopSharingBtn.disabled = true;
+            statusDiv.textContent = "Berbagi dihentikan";
+            statusDiv.className = "status disconnected";
+            
+            // Di aplikasi nyata, di sini akan ditutup koneksi WebRTC
+            console.log("Screen sharing stopped");
+        }
+    </script>
+</body>
+</html>
